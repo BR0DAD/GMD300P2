@@ -23,6 +23,6 @@ public class Bullet : MonoBehaviour
 
     public void SHOOT(Vector3 direction)
     {
-        rb.AddForce(direction.normalized * 5, ForceMode.Impulse);
+        rb.AddForce(direction.normalized * 20, ForceMode.Impulse);
     }
 }
