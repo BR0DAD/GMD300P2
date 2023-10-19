@@ -1,3 +1,4 @@
+
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,15 +18,15 @@ public class ThirdCharacterController : MonoBehaviour
     public Camera Camera;
     public GameObject BOULDER_Prefab;
     public Transform projectileReference;
-    
+
     public int playerHealth = 3;
 
-    public float moveMaxSpeed = 5;
-    public float moveAcceleration = 10;
+    public float MoveMaxSpeed = 5;
+    public float MoveAcceleration = 10;
 
-    public float jumpSpeed = 5;
-    public float jumpMaxTime = 0.5f;
-    private float jumpTimer = 0;
+    public float JumpSpeed = 5;
+    public float JumpMaxTime = 0.5f;
+    private float JumpTimer = 0;
 
     private CharacterController characterController;
 
@@ -35,11 +36,11 @@ public class ThirdCharacterController : MonoBehaviour
 
     private bool jumpInputPressed = false;
     private bool isJumping = false;
-    public float shootDelay;
+    public float ShootDelay;
     private float shotTime;
 
-    public Image healthBar;
-    public float healthAmount = 100f;
+    public Image HealthBar;
+    public float HealthAmount = 100f;
     private float currentPlayerHealth;
 
     //grabs player health and the character controller
@@ -47,9 +48,11 @@ public class ThirdCharacterController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         currentPlayerHealth = playerHealth;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
-    
+
     private void Update()
     {
         //makes it so over time the cooldown for the player to shoot a pinball goes down
@@ -60,23 +63,23 @@ public class ThirdCharacterController : MonoBehaviour
         cameraSpaceMovement = Camera.main.transform.TransformDirection(cameraSpaceMovement);
         Vector2 cameraHorizontalMovement = new Vector2(cameraSpaceMovement.x, cameraSpaceMovement.z);
 
-        currentHorizontalVelocity = Vector2.Lerp(currentHorizontalVelocity, cameraHorizontalMovement * moveMaxSpeed, Time.deltaTime * moveAcceleration);
+        currentHorizontalVelocity = Vector2.Lerp(currentHorizontalVelocity, cameraHorizontalMovement * MoveMaxSpeed, Time.deltaTime * MoveAcceleration);
 
         //code to check if the player is jumping
-        if(isJumping == false) 
+        if (isJumping == false)
         {
             currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
-            
-            if(characterController.isGrounded && currentVerticalVelocity < 0)
+
+            if (characterController.isGrounded && currentVerticalVelocity < 0)
             {
                 currentVerticalVelocity = Physics.gravity.y * Time.deltaTime;
             }
         }
         else
         {
-            jumpTimer += Time.deltaTime;
+            JumpTimer += Time.deltaTime;
 
-            if(jumpTimer >= jumpMaxTime)
+            if (JumpTimer >= JumpMaxTime)
             {
                 isJumping = false;
             }
@@ -91,9 +94,9 @@ public class ThirdCharacterController : MonoBehaviour
         {
 
             Quaternion newDirection = Quaternion.LookRotation(horizontalDirection.normalized);
-            transform.rotation = Quaternion.Slerp(transform.rotation, newDirection, Time.deltaTime * moveAcceleration);
+            transform.rotation = Quaternion.Slerp(transform.rotation, newDirection, Time.deltaTime * MoveAcceleration);
         }
-       
+
         characterController.Move(currentVelocity * Time.deltaTime);
     }
 
@@ -114,9 +117,9 @@ public class ThirdCharacterController : MonoBehaviour
             {
                 isJumping = true;
 
-                jumpTimer = 0;
+                JumpTimer = 0;
 
-                currentVerticalVelocity = jumpSpeed;
+                currentVerticalVelocity = JumpSpeed;
             }
         }
         else
@@ -137,7 +140,7 @@ public class ThirdCharacterController : MonoBehaviour
             return;
         }
         //cooldown to shoot boulder
-        shotTime = shootDelay;
+        shotTime = ShootDelay;
 
         //creates boulder
         Instantiate(BOULDER_Prefab, projectileReference.position, Quaternion.identity);
@@ -145,7 +148,7 @@ public class ThirdCharacterController : MonoBehaviour
 
         if (overlapItems.Length > 0)
         {
-            foreach(Collider item in overlapItems)
+            foreach (Collider item in overlapItems)
             {
                 Vector3 direction = item.transform.position - transform.position;
                 item.SendMessage("SHOOT", direction, SendMessageOptions.DontRequireReceiver);
@@ -171,6 +174,6 @@ public class ThirdCharacterController : MonoBehaviour
     //function to update the health UI
     public void TakeDamage()
     {
-        healthBar.fillAmount =  currentPlayerHealth / playerHealth;
+        HealthBar.fillAmount = currentPlayerHealth / playerHealth;
     }
 }
